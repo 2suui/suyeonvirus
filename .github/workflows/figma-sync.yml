@@ -1,0 +1,26 @@
+name: Figma Sync
+
+on:
+  repository_dispatch:
+    types: [figma-update]
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Figma Sync Script
+        env:
+          FIGMA_TOKEN: ${{ secrets.FIGMA_TOKEN }}
+          FIGMA_FILE_KEY: ${{ github.event.client_payload.file_key }}
+        run: node scripts/figma-sync.js
